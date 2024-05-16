@@ -257,7 +257,7 @@ internal
         JsonObject? arrayItems = null;
         JsonNode? additionalProperties = null;
         JsonArray? enumValues = null;
-        JsonArray? anyOfSchema = null;
+        JsonArray? oneOfSchema = null;
 
         if (!IsBuiltInConverter(effectiveConverter))
         {
@@ -289,7 +289,7 @@ internal
         if (parentPolymorphicType is null && typeInfo.PolymorphismOptions is { DerivedTypes.Count: > 0 } polyOptions)
         {
             // This is the base type of a polymorphic type hierarchy. The schema for this type
-            // will include an "anyOf" property with the schemas for all derived types.
+            // will include an "oneOf" property with the schemas for all derived types.
 
             string typeDiscriminatorKey = polyOptions.TypeDiscriminatorPropertyName;
             List<JsonDerivedType> derivedTypes = polyOptions.DerivedTypes.ToList();
@@ -301,8 +301,8 @@ internal
                 derivedTypes.Add(new JsonDerivedType(type));
             }
 
-            state.Push(AnyOfPropertyName);
-            anyOfSchema = new JsonArray();
+            state.Push(oneOfPropertyName);
+            oneOfSchema = new JsonArray();
 
             int i = 0;
             foreach (JsonDerivedType derivedType in derivedTypes)
@@ -329,7 +329,7 @@ internal
                     parentPolymorphicType: type,
                     typeDiscriminator: derivedTypeDiscriminator);
 
-                anyOfSchema.Add((JsonNode)derivedSchema);
+                oneOfSchema.Add((JsonNode)derivedSchema);
                 state.Pop();
             }
 
@@ -355,7 +355,7 @@ internal
                         }
                         else if (numberHandling is JsonNumberHandling.AllowNamedFloatingPointLiterals && simpleTypeInfo.IsIeeeFloatingPoint)
                         {
-                            anyOfSchema = new JsonArray
+                            oneOfSchema = new JsonArray
                             {
                                 (JsonNode)new JsonObject { [TypePropertyName] = MapSchemaType(schemaType) },
                                 (JsonNode)new JsonObject
@@ -576,7 +576,7 @@ internal
             arrayItems: arrayItems,
             additionalProperties: additionalProperties,
             enumValues: enumValues,
-            anyOfSchema: anyOfSchema,
+            oneOfSchema: oneOfSchema,
             hasDefaultValue: hasDefaultValue,
             defaultValue: defaultValue);
 
@@ -726,7 +726,7 @@ internal
         JsonObject? arrayItems = null,
         JsonNode? additionalProperties = null,
         JsonArray? enumValues = null,
-        JsonArray? anyOfSchema = null,
+        JsonArray? oneOfSchema = null,
         bool hasDefaultValue = false,
         JsonNode? defaultValue = null)
     {
@@ -787,9 +787,9 @@ internal
             schema.Add(EnumPropertyName, enumValues);
         }
 
-        if (anyOfSchema is not null)
+        if (oneOfSchema is not null)
         {
-            schema.Add(AnyOfPropertyName, anyOfSchema);
+            schema.Add(oneOfPropertyName, oneOfSchema);
         }
 
         if (hasDefaultValue)
@@ -867,7 +867,7 @@ internal
     private const string ItemsPropertyName = "items";
     private const string AdditionalPropertiesPropertyName = "additionalProperties";
     private const string EnumPropertyName = "enum";
-    private const string AnyOfPropertyName = "anyOf";
+    private const string oneOfPropertyName = "oneOf";
     private const string ConstPropertyName = "const";
     private const string DefaultPropertyName = "default";
     private const string StjValuesMetadataProperty = "$values";

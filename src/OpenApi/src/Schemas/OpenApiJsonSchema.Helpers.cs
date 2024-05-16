@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using OpenApiConstants = Microsoft.AspNetCore.OpenApi.OpenApiConstants;
 
 internal sealed partial class OpenApiJsonSchema
 {
@@ -268,8 +269,14 @@ internal sealed partial class OpenApiJsonSchema
             case OpenApiSchemaKeywords.AnyOfKeyword:
                 reader.Read();
                 schema.Type = "object";
-                var schemas = ReadList<OpenApiJsonSchema>(ref reader);
-                schema.AnyOf = schemas?.Select(s => s.Schema).ToList();
+                var anyOfSchemas = ReadList<OpenApiJsonSchema>(ref reader);
+                schema.AnyOf = anyOfSchemas?.Select(s => s.Schema).ToList();
+                break;
+            case OpenApiSchemaKeywords.OneOfKeyword:
+                reader.Read();
+                schema.Type = "object";
+                var oneOfSchemas = ReadList<OpenApiJsonSchema>(ref reader);
+                schema.OneOf = oneOfSchemas?.Select(s => s.Schema).ToList();
                 break;
             case OpenApiSchemaKeywords.DiscriminatorKeyword:
                 reader.Read();
@@ -283,6 +290,27 @@ internal sealed partial class OpenApiJsonSchema
                 reader.Read();
                 var mappings = ReadDictionary<string>(ref reader);
                 schema.Discriminator.Mapping = mappings;
+                break;
+            // OpenAPI v3 does not support the const keyword that is supported by JSON
+            // schema. This keyword is typically used to reflect the default value of the
+            // discriminator property on a type. Since we target OpenAPI v3 and below, we
+            // map the const to its closest approximate value in OpenAPI v3 which is an
+            // enum with a single supported value.
+            case OpenApiSchemaKeywords.ConstKeyword:
+                reader.Read();
+                schema.Enum = ReadOpenApiAny(ref reader) is { } resolved ? new List<IOpenApiAny> { resolved } : null;
+                break;
+            case OpenApiSchemaKeywords.ReferenceKeyword:
+                reader.Read();
+                var reference = reader.GetString();
+                if (reference is not null)
+                {
+                    schema.Reference = new OpenApiReference { Id = reference, Type = ReferenceType.Schema };
+                }
+                break;
+            case OpenApiConstants.SchemaId:
+                reader.Read();
+                schema.Extensions.Add(OpenApiConstants.SchemaId, new OpenApiString(reader.GetString()));
                 break;
         }
     }

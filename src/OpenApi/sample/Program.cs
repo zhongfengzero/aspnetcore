@@ -26,6 +26,7 @@ builder.Services.AddOpenApi("v2", options => {
 });
 builder.Services.AddOpenApi("responses");
 builder.Services.AddOpenApi("forms");
+builder.Services.AddOpenApi("polymorphic");
 
 var app = builder.Build();
 
@@ -62,6 +63,8 @@ var v2 = app.MapGroup("v2")
     .WithGroupName("v2");
 var responses = app.MapGroup("responses")
     .WithGroupName("responses");
+var polymorphic = app.MapGroup("polymorphic")
+    .WithGroupName("polymorphic");
 
 v1.MapGet("/array-of-guids", (Guid[] guids) => guids);
 
@@ -81,8 +84,10 @@ responses.MapGet("/200-add-xml", () => new TodoWithDueDate(1, "Test todo", false
 responses.MapGet("/200-only-xml", () => new TodoWithDueDate(1, "Test todo", false, DateTime.Now.AddDays(1), DateTime.Now))
     .Produces<Todo>(contentType: "text/xml");
 
-responses.MapGet("/triangle", () => new Triangle { Color = "red", Sides = 3, Hypotenuse = 5.0 });
-responses.MapGet("/shape", () => new Shape { Color = "blue", Sides = 4 });
+responses.MapGet("/triangle", () => new Triangle { Color = "red", Sides = 3, Hypotenuse = 5 });
+
+polymorphic.MapPost("/", (Shape shape) => Results.Ok(shape));
+polymorphic.MapGet("/", () => TypedResults.Ok<Shape>(new Triangle() { Color = "red", Sides = 3, Hypotenuse = 5 }));
 
 app.MapControllers();
 

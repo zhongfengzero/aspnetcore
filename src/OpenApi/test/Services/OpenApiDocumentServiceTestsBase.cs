@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Reflection;
-using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
@@ -18,7 +15,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Moq;
 using static Microsoft.AspNetCore.OpenApi.Tests.OpenApiOperationGeneratorTests;
@@ -77,6 +73,8 @@ public abstract class OpenApiDocumentServiceTestBase
         var openApiOptions = new Mock<IOptionsMonitor<OpenApiOptions>>();
         openApiOptions.Setup(o => o.Get(It.IsAny<string>())).Returns(new OpenApiOptions());
 
+        var componentService = new OpenApiSchemaService("Test", Options.Create(new Microsoft.AspNetCore.Http.Json.JsonOptions()), builder.ServiceProvider, openApiOptions.Object);
+        ((TestServiceProvider)builder.ServiceProvider).TestComponentService = componentService;
         var documentService = new OpenApiDocumentService("Test", apiDescriptionGroupCollectionProvider, hostEnvironment, openApiOptions.Object, builder.ServiceProvider);
         ((TestServiceProvider)builder.ServiceProvider).TestDocumentService = documentService;
 
@@ -101,6 +99,8 @@ public abstract class OpenApiDocumentServiceTestBase
 
         var apiDescriptionGroupCollectionProvider = CreateApiDescriptionGroupCollectionProvider(context.Results);
 
+        var componentService = new OpenApiSchemaService("Test", Options.Create(new Microsoft.AspNetCore.Http.Json.JsonOptions()), builder.ServiceProvider, options.Object);
+        ((TestServiceProvider)builder.ServiceProvider).TestComponentService = componentService;
         var documentService = new OpenApiDocumentService("Test", apiDescriptionGroupCollectionProvider, hostEnvironment, options.Object, builder.ServiceProvider);
         ((TestServiceProvider)builder.ServiceProvider).TestDocumentService = documentService;
 
@@ -215,7 +215,7 @@ public abstract class OpenApiDocumentServiceTestBase
         public static TestServiceProvider Instance { get; } = new TestServiceProvider();
         private IKeyedServiceProvider _serviceProvider;
         internal OpenApiDocumentService TestDocumentService { get; set; }
-        internal OpenApiComponentService TestComponentService { get; set; } = new OpenApiComponentService(Options.Create(new Microsoft.AspNetCore.Http.Json.JsonOptions()));
+        internal OpenApiSchemaService TestComponentService { get; set; }
 
         public void SetInternalServiceProvider(IServiceCollection serviceCollection)
         {
@@ -228,12 +228,12 @@ public abstract class OpenApiDocumentServiceTestBase
             {
                 return TestDocumentService;
             }
-            if (serviceType == typeof(OpenApiComponentService))
+            if (serviceType == typeof(OpenApiSchemaService))
             {
                 return TestComponentService;
             }
 
-            if (serviceType == typeof(OpenApiComponentService))
+            if (serviceType == typeof(OpenApiSchemaService))
             {
                 return TestComponentService;
             }
@@ -247,12 +247,12 @@ public abstract class OpenApiDocumentServiceTestBase
             {
                 return TestDocumentService;
             }
-            if (serviceType == typeof(OpenApiComponentService))
+            if (serviceType == typeof(OpenApiSchemaService))
             {
                 return TestComponentService;
             }
 
-            if (serviceType == typeof(OpenApiComponentService))
+            if (serviceType == typeof(OpenApiSchemaService))
             {
                 return TestComponentService;
             }

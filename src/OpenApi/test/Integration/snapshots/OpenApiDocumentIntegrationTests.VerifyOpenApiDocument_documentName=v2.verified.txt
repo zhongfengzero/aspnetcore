@@ -105,11 +105,9 @@
                 "type": "object",
                 "properties": {
                   "Title": {
-                    "minLength": 5,
                     "type": "string"
                   },
                   "Description": {
-                    "minLength": 5,
                     "type": "string"
                   },
                   "IsCompleted": {
@@ -131,6 +129,38 @@
             "description": "OK"
           }
         },
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "String": {
+        "type": "string"
+      },
+      "StringArray": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "Stream": {
+        "type": "string",
+        "format": "binary"
+      },
+      "PipeReader": {
+        "type": "string",
+        "format": "binary"
+      },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
+      "IFormFileCollection": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "binary"
+        }
       }
     }
   },

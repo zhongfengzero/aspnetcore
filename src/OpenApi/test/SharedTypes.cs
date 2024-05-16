@@ -19,19 +19,21 @@ internal record Result<T>(bool IsSuccessful, T Value, Error Error);
 
 [JsonDerivedType(typeof(Triangle), typeDiscriminator: "triangle")]
 [JsonDerivedType(typeof(Square), typeDiscriminator: "square")]
-internal class Shape
+internal abstract class Shape
 {
-    internal string Color { get; set; } = string.Empty;
-    internal int Sides { get; set; }
+    public string Color { get; init; } = string.Empty;
+    public int Sides { get; init; }
+
 }
 
 internal class Triangle : Shape
 {
-    internal double Hypotenuse { get; set; }
+    public int Hypotenuse { get; init; }
 }
+
 internal class Square : Shape
 {
-    internal double Area { get; set; }
+    public int Area { get; init; }
 }
 
 internal class Vehicle

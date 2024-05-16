@@ -9,6 +9,7 @@ internal class OpenApiSchemaKeywords
     public const string PropertiesKeyword = "properties";
     public const string RequiredKeyword = "required";
     public const string AnyOfKeyword = "anyOf";
+    public const string OneOfKeyword = "oneOf";
     public const string EnumKeyword = "enum";
     public const string DefaultKeyword = "default";
     public const string NullableKeyword = "nullable";
@@ -22,4 +23,7 @@ internal class OpenApiSchemaKeywords
     public const string MaximumKeyword = "maximum";
     public const string MinItemsKeyword = "minItems";
     public const string MaxItemsKeyword = "maxItems";
+    public const string ReferenceKeyword = "$ref";
+    public const string IdKeyword = "id";
+    public const string ConstKeyword = "const";
 }
