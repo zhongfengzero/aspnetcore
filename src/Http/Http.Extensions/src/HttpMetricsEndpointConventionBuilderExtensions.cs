@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.Builder;
 /// </summary>
 public static class HttpMetricsEndpointConventionBuilderExtensions
 {
-    public static IEndpointConventionBuilder DisableHttpMetrics(this IEndpointConventionBuilder builder, int? statusCode = null)
+    public static IEndpointConventionBuilder DisableHttpMetrics(this IEndpointConventionBuilder builder)
     {
         builder.Add(b => b.Metadata.Add(new DisableHttpMetricsAttribute()));
         return builder;
