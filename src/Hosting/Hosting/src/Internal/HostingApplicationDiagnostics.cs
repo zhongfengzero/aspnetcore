@@ -155,6 +155,7 @@ internal sealed class HostingApplicationDiagnostics
             if (context.MetricsEnabled)
             {
                 var endpoint = HttpExtensions.GetOriginalEndpoint(httpContext);
+                var disableHttpRequestDurationMetric = endpoint?.Metadata.GetMetadata<IDisableHttpMetricsMetadata>() != null;
                 var route = endpoint?.Metadata.GetMetadata<IRouteDiagnosticsMetadata>()?.Route;
 
                 Debug.Assert(context.MetricsTagsFeature != null, "MetricsTagsFeature should be set if MetricsEnabled is true.");
@@ -169,7 +170,8 @@ internal sealed class HostingApplicationDiagnostics
                     exception,
                     context.MetricsTagsFeature.TagsList,
                     startTimestamp,
-                    currentTimestamp);
+                    currentTimestamp,
+                    disableHttpRequestDurationMetric);
             }
 
             if (reachedPipelineEnd)
