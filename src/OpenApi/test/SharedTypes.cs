@@ -10,6 +10,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
+/// <summary>
+/// this is a todo from a shared referenced project
+/// </summary>
 internal record Todo(int Id, string Title, bool Completed, DateTime CreatedAt);
 
 internal record TodoWithDueDate(int Id, string Title, bool Completed, DateTime CreatedAt, DateTime DueDate) : Todo(Id, Title, Completed, CreatedAt);
