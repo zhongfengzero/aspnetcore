@@ -55,6 +55,7 @@ internal class ResourceCollectionProvider
     }
 
     [DynamicDependency(JsonSerialized, typeof(ResourceAsset))]
+    [DynamicDependency(JsonSerialized, typeof(ResourceAssetProperty))]
     private async Task<ResourceAssetCollection> LoadResourceCollection()
     {
         if (_url == null)
