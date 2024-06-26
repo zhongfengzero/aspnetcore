@@ -93,6 +93,7 @@ internal sealed class OpenApiSchemaService(
             if (context.PropertyInfo is { AttributeProvider: { } attributeProvider } jsonPropertyInfo)
             {
                 schema.ApplyNullabilityContextInfo(jsonPropertyInfo);
+                schema.ApplyReadOnly(attributeProvider);
                 if (attributeProvider.GetCustomAttributes(inherit: false).OfType<ValidationAttribute>() is { } validationAttributes)
                 {
                     schema.ApplyValidationAttributes(validationAttributes);

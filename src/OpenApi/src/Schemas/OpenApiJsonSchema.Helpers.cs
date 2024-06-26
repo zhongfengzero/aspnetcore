@@ -294,6 +294,10 @@ internal sealed partial class OpenApiJsonSchema
                 reader.Read();
                 schema.Extensions.Add(OpenApiConstants.SchemaId, new OpenApiString(reader.GetString()));
                 break;
+            case OpenApiSchemaKeywords.ReadOnlyKeyword:
+                reader.Read();
+                schema.ReadOnly = reader.GetBoolean();
+                break;
             default:
                 reader.Skip();
                 break;
